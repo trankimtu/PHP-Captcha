@@ -6,3 +6,6 @@ if(isset($_POST["captcha_code"])){
   }
 }
 ?>
+
+<!DOCTYPE HTML>
+form
