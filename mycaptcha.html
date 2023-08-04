@@ -1,0 +1,132 @@
+<head>
+    <title>Title of the document</title>
+    <style>
+      #canvas {
+        /* background: #59b8de; */
+        width: 200;
+        height: 100;
+        border: solid 1px #a8a8a8;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas><br>
+    <label for="captcha">Enter the text in picture:</label><br>
+    <input type="text" id="captchaInput"><br>
+    <button id="reload-button">Reload</button>
+    <button id="submit">Submit</button>
+
+
+
+    <script>
+        const captchaCodeGen = () =>  {
+            let captchaCode = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const charactersLength = characters.length;
+            let length = 6;
+            let counter = 0;
+            while (counter < length) {
+                captchaCode += characters.charAt(Math.floor(Math.random() * charactersLength));
+                counter += 1;
+            }
+            return captchaCode;
+        }
+
+        // Apply captcha code to picture
+        function captchaImgGen () {
+            let captchaCode = captchaCodeGen();
+            var canvas = document.getElementById("canvas");
+            var context = canvas.getContext("2d");
+            context.fillStyle = "#a8a8a8";
+            context.font = "bold 60px Arial";
+            // context.rotate(-Math.PI / 9);
+            // context.fillText("Text", (canvas.width / 2) - 17, (canvas.height / 2) + 8);
+
+            // to increase performance createImageData method 
+            // should be executed once e.g. before drawing
+            var image = context.createImageData(1, 1); // pixel image
+            var data = image.data;
+
+            function drawPixel(x, y, color) {
+                data[0] = color.r;
+                data[1] = color.g;
+                data[2] = color.b;
+                data[3] = color.a;
+                context.putImageData(image, x, y);
+            }
+            
+            var colors = [
+                {r: 255, g:   0, b:   0, a: 255}, // red
+                {r:   0, g: 255, b:   0, a: 255}, // green
+                {r:   0, g:   0, b: 255, a: 255}, // blue
+            ];
+
+            // var t1 = new Date();
+
+            for(var i = 0; i < 10000; ++i) {
+                var x = canvas.width * Math.random();
+                var y = canvas.height * Math.random();
+                var color = colors[i % colors.length];
+                drawPixel(x, y, color);
+            }
+            
+            // var t2 = new Date();
+            // var dt = t2 - t1;
+
+
+
+
+            context.fillText(captchaCode, 20, 100,);
+            return captchaCode;
+        }
+        
+        let captchaCode = captchaImgGen()
+
+
+        function clearCanvas () {
+            var canvas = document.getElementById("canvas");
+            var context = canvas.getContext('2d');
+            context.clearRect(-100, 0, canvas.width * 100, canvas.height*100);
+         
+        }
+        function captchaReload () {
+            clearCanvas();
+            captchaImgGen()
+
+         
+        }
+
+        
+
+
+        // Regen Captcha Button
+        let reloadButton = document.getElementById("reload-button");
+        
+        // Call regen captcha function 
+        reloadButton.addEventListener("click", captchaReload);
+
+        function submitFunction(){
+            let inputValue = document.getElementById('captchaInput').value
+            let captchaCode = captchaCodeGen();
+            console.log("inputValue= ", inputValue);
+            console.log("captchaCode = ", captchaCode);
+
+            if (inputValue == captchaCode) {
+                console.log("captcha match");
+            }
+            else
+            {
+                console.log("captcha mismatch");
+            }
+        }
+        let submit = document.getElementById("submit");
+        submit.addEventListener("click", submitFunction);
+
+
+
+       
+    </script>
+  </body>
+</html>
+
+
